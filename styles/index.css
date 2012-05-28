@@ -1,0 +1,47 @@
+body{
+   margin:0;
+   padding:0;
+   font-size:14px;
+}
+#logo {
+	text-align: center;
+	font-size:36px;
+}
+#wrapper {
+	margin: auto;
+	width: 330px;
+}
+#searchresult {
+	padding: 10px;
+	overflow: auto;
+}
+.srborder {
+	border: 1px;
+}
+.ftplist {
+	background-color:#5fc928;
+}
+.filelist {
+	color:#1ca325;
+}
+.folderlist {
+	color:#2169d0;
+}
+.filesize {
+	color:#000;
+}
+.filetime {
+	color:#000;
+}
+.filelink {
+	color:#23890c;
+}
+.filecount {
+	background-color:#00ff87;
+}
+.onError {
+	color:#ff0000;
+}
+.formtips {
+	width: 2px;margin:2px;padding:2px;
+}
