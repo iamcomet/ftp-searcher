@@ -77,10 +77,10 @@
 				var fileTime = $("fileTime",this).text();
 				var fileType = $("fileType",this).text();
 
-				if(fileType == 0) {
-					var htmlfile = "<div class='filelist'><a href='fileinfo.php?fileID="+fileID+"'>"+fileName+"</a> <span class='filesize'>"+fileSize+"</span><span class='filetime'> [ "+fileTime+" ]</span><div class='filelink'>ftp://"+ftpServer+remoteDir+"/"+fileName+"</div><br/>";
+				if(fileType == 0) {	//0:file, 1:folder
+					var htmlfile = "<div class='filelist'><a href='fileinfo.php?fileID="+fileID+"'>"+fileName+"</a> <span class='filesize'>"+fileSize+"</span><span class='filetime'> [ "+fileTime+" ]</span><div class='filelink'>ftp://"+ftpServer+fileDir+"/"+fileName+"</div><br/>";
 				}else{
-					var htmlfile = "<div class='folderlist'><a href='browse.php?fileID="+fileID+"'>"+fileName+"</a>  [ "+fileTime+" ]</div><div class='filelink'>ftp://"+ftpServer+remoteDir+"/"+fileName+"</div><br/>";
+					var htmlfile = "<div class='folderlist'><a href='browse.php?fileID="+fileID+"'>"+fileName+"</a>  [ "+fileTime+" ]</div><div class='filelink'>ftp://"+ftpServer+fileDir+"/"+fileName+"</div><br/>";
 				}			
 				$("#searchresult").append(htmlfile);
 			});

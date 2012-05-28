@@ -67,55 +67,57 @@ function getConfig()
 	// Get file list content
 	$lFolderName = $ftp_remote_dir;
 	logging($ftp_server." getting files... ");
-	
+	//$NewLine = "\n";
 	for ($i = 0; $i < $listlineNum; $i++) 
 	{
-		$firstchr = substr($listline[$i],0,1);
-		//echo "firstchr:".$firstchr.$NewLine;
-		switch ($firstchr) 
-		{
-			case "-":
-				//lContent has lSzie, lTime, lFileName
-				$lContent = trim(substr($listline[$i],30,strlen($listline[$i])-29));
-				$lContentLen = strlen($lContent);
-				$lSzie = substr($lContent,0,strpos($lContent,chr(32)));
-				//change "May  1 13:10" to Unixtime
-				$lTime = strtotime(substr($lContent,strlen($lSzie)+1,12));
-				$lFileName = substr($lContent,strlen($lSzie)+14,$lContentLen-strlen($lSzie)-14);
-				$FileCount += 1;
-				$SumSize = $SumSize + $lSzie;
-				$lFileType = 0;
-				//echo $lFileName.$NewLine;
-				mysql_query("INSERT ftps_FtpFileInUsed(ftpID,fileName,fileDir,fileSize,fileTime,fileType) VALUES(".$ftp_id.",'".$lFileName."','".$lFolderName."',".$lSzie.",".$lTime.",".$lFileType.")");
-				break;
-			case "d":
-				//lContent has lSzie, lTime, lFileName
-				$lContent = trim(substr($listline[$i],30,strlen($listline[$i])-29));
-				$lContentLen = strlen($lContent);
-				$lSzie = substr($lContent,0,strpos($lContent,chr(32)));
-				//change "May  1 13:10" to Unixtime
-				$lTime = strtotime(substr($lContent,strlen($lSzie)+1,12));
-				$lFileName = substr($lContent,strlen($lSzie)+14,$lContentLen-strlen($lSzie)-14);
-				$FolderCount += 1;
-				$SumSize = $SumSize + $lSzie;
-				$lFileType = 1;
-				//echo $lFileName.$NewLine;
-				mysql_query("INSERT ftps_FtpFileInUsed(ftpID,fileName,fileDir,fileSize,fileTime,fileType) VALUES(".$ftp_id.",'".$lFileName."','".$lFolderName."',".$lSzie.",".$lTime.",".$lFileType.")");
-				break;
-			case "/":
-				$lContent = trim($listline[$i]);
-				$lFolderName = substr($lContent,0,strlen($lContent)-1)."/";
-				//echo $lFolderName.$NewLine;
-				break;
-				// linux folder begin with ".", but this DO NOT effect ?  2012-01-13
-//			case ".":
-//				$lContent = trim($listline[$i]);
-//				$lFolderName = substr($lContent,1,strlen($lContent)-1)."/";
-//				echo $lFolderName.$NewLine;
-//				break;
-			default:
-				$ot = $ot."@".$listline[$i];
-				break;
+		if(strlen($listline[$i]) != 0){
+			$firstchr = substr($listline[$i],0,1);
+			//echo "firstchr:".strlen($firstchr)."@".$firstchr.$NewLine;
+			switch ($firstchr) 
+			{
+				case "-":
+					//lContent has lSzie, lTime, lFileName
+					$lContent = trim(substr($listline[$i],30,strlen($listline[$i])-29));
+					$lContentLen = strlen($lContent);
+					$lSzie = substr($lContent,0,strpos($lContent,chr(32)));
+					//change "May  1 13:10" to Unixtime
+					$lTime = strtotime(substr($lContent,strlen($lSzie)+1,12));
+					$lFileName = substr($lContent,strlen($lSzie)+14,$lContentLen-strlen($lSzie)-14);
+					$FileCount += 1;
+					$SumSize = $SumSize + $lSzie;
+					$lFileType = 0;
+					mysql_query("INSERT ftps_FtpFileInUsed(ftpID,fileName,fileDir,fileSize,fileTime,fileType) VALUES(".$ftp_id.",'".$lFileName."','".$lFolderName."',".$lSzie.",".$lTime.",".$lFileType.")");
+					break;
+				case "d":
+					//lContent has lSzie, lTime, lFileName
+					$lContent = trim(substr($listline[$i],30,strlen($listline[$i])-29));
+					$lContentLen = strlen($lContent);
+					$lSzie = substr($lContent,0,strpos($lContent,chr(32)));
+					//change "May  1 13:10" to Unixtime
+					$lTime = strtotime(substr($lContent,strlen($lSzie)+1,12));
+					$lFileName = substr($lContent,strlen($lSzie)+14,$lContentLen-strlen($lSzie)-14);
+					$FolderCount += 1;
+					$SumSize = $SumSize + $lSzie;
+					$lFileType = 1;
+					//echo "lFolderName:".$lFolderName.$NewLine;
+					mysql_query("INSERT ftps_FtpFileInUsed(ftpID,fileName,fileDir,fileSize,fileTime,fileType) VALUES(".$ftp_id.",'".$lFileName."','".$lFolderName."',".$lSzie.",".$lTime.",".$lFileType.")");
+					break;
+				case "/":	//linux folder begin with "./", but php consider it "/"   2012-05-29
+					$lContent = trim($listline[$i]);
+					//$lFolderName = substr($lContent,0,strlen($lContent)-1);	//windows folder
+					$lFolderName = substr($lContent,1,strlen($lContent)-2);		//linux folder, more a "/"
+					//echo "!".$lFolderName.$NewLine;
+					break;
+				case "t":		//windows folder next line is "total 141965", like sector counts.
+					$lContent = trim($listline[$i]);
+					$lFolderName = "/".$lFolderName;	//windows folder need to add "/"
+					break;
+					// linux folder begin with "./", but php consider it "/"   2012-05-29
+				default:
+					$lContent = trim($listline[$i]);
+					$lFolderName = substr($lContent,0,strlen($lContent)-1);
+					echo $lContent."@@".$lFolderName.$NewLine;
+			}
 		}
 	}
 	$NeedTime = time()-$StartGetTime;
