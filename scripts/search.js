@@ -1,10 +1,5 @@
 //<![CDATA[
 	$(function(){
-		function currentYear(){
-			var d = new Date(),str = '';
-			str += d.getFullYear(); 
-			return str;
-		}
 		$("#foot").html(" Power by <a href=\"http://www.3gComet.com\" target=\"_blank\">星魂驿站</a> "+currentYear());
 		//表单提交
 		$("#loading").ajaxStart(function(){
@@ -75,7 +70,7 @@
 	function showMessages(xml){
 		var countnum = $("countnum",xml).text();
 		var sizenum = $("sizenum",xml).text();
-		htmlcountnum = "<div class='filecount'>有 "+countnum+" 条与 <span class='keywords'>"+$("#content").val()+"</span> 相关的信息，共 "+sizenum+"</div>";
+		htmlcountnum = "<div class='filecount'>有 "+countnum+" 条与 <span class='keywords'>"+htmlencode($("#content").val())+"</span> 相关的信息，共 "+sizenum+"</div>";
 		$("#searchresult").append(htmlcountnum);
 		var htmlfile = "";
 		if(countnum){	//有记录才显示
