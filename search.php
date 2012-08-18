@@ -84,7 +84,7 @@ if(strlen($sqlkw1) == 0){
 }
 
 //查询数据，用 locate 代替 like，效率高；同时搜索fileName和fileDirectory
-$sql="SELECT ff.`fileID`,ff.`fileName`,ff.`fileDir`,ff.`fileSize`,ff.`fileTime`,ff.`fileType`,fs.`ftpServer`,fs.`ftpPort`,fs.`remoteDir`,fs.`ftpID` FROM `ftps_FtpFileInUsed` ff LEFT JOIN `ftps_FtpSrvInUsed` fs ON ff.`ftpID`=fs.`ftpID` WHERE $sqlkwv";
+$sql="SELECT ff.`fileID`,ff.`fileName`,ff.`fileDir`,ff.`fileSize`,ff.`fileTime`,ff.`fileType`,fs.`ftpServer`,fs.`ftpPort`,fs.`remoteDir`,fs.`ftpID` FROM `ftps_FtpFileInUsed` ff LEFT JOIN `ftps_FtpSrvInUsed` fs ON ff.`ftpID`=fs.`ftpID` WHERE $sqlkwv ORDER BY ff.`ftpID`";
 //die($sql);
 
 $res = $mysqli->query($sql);
