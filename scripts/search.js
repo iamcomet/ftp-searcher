@@ -1,6 +1,11 @@
 //<![CDATA[
 	$(function(){
-		$("#loading").hide();
+		function currentYear(){
+			var d = new Date(),str = '';
+			str += d.getFullYear(); 
+			return str;
+		}
+		$("#foot").html(" Power by <a href=\"http://www.3gComet.com\" target=\"_blank\">星魂驿站</a> "+currentYear());
 		//表单提交
 		$("#loading").ajaxStart(function(){
 			$(this).show();
@@ -8,6 +13,7 @@
 		$("#loading").ajaxStop(function(){
 			$(this).hide();
 		});
+		//获取url参数，如果带任何参数则使用扩展引擎
 		function getUrl(paras){
 			var reg = new RegExp("(^|&)"+ paras +"=([^&]*)(&|$)");
 			var para = window.location.search.substr(1).match(reg);
@@ -17,48 +23,61 @@
 				//return unescape([para[2]]);
 			}
 			return actionpage;
-		}
-		
-		 //文本框失去焦点后
-		$("#content").blur(function(){
-			 var $parent = $(this).parent();
-			 $parent.find(".formtips").remove();
-			 //验证
-			 if( $(this).is("#content") ){
-				if( this.value=="" || this.value.length < 2 ){
-					alert("请输入至少2位");
-		            $parent.append('<span class="formtips onError"> </span>');
-				}
-			 }
-		});//end blur
+		};
 
+		//搜索关键字提示
+		function log( message ) {
+			$( "<div/>" ).text( message ).prependTo( "#log" );
+			$( "#log" ).scrollTop( 0 );
+		}
+		$( "#content" ).autocomplete({
+			source: "search-keyword.php",
+			minLength: 2
+		});
+
+		//提交表单之前的检测
 		$("#searchform").submit(function(){
 			var actionpage = getUrl("se");
-
-			$("#content").trigger('blur');
-			var numError = $("form .onError").length;
-			if(numError){
+			$("#notless").remove();
+			if($("#content").val().length<2){
+				var $notless = $("<div id='notless' class='notless'>最少输入两个字符</div>");
+				$(this).append($notless);
+				$("#content").focus();
 				return false;
 			}
-			$.post(actionpage,{
-				content: $("#content").val(),
-				action: "search"
-			},function(xml){
-				$("#searchresult").html("");
-				if(actionpage == "sphinxsearch.php"){
-					var engineinfo = " <div class='engineinfo'>本次搜索使用扩展引擎，最多返回1000条相关信息。</div>";
-					$("#searchresult").append(engineinfo);
+			$.ajax({
+				type:"POST",
+				url:actionpage,
+				data:{
+					content: $("#content").val(),
+					action: "search"
+				},
+				dataType:"xml",
+				//请求成功后的回调函数
+				success:function(xml){
+					$("#searchresult").html("");
+					if(actionpage == "sphinxsearch.php"){
+						var engineinfo = " <div class='engineinfo'>本次搜索使用扩展引擎，最多返回1000条相关信息。</div>";
+						$("#searchresult").append(engineinfo);
+					}
+					$("#searchresult").addClass("srborder");
+					//对返回的xml进行处理并显示
+					showMessages(xml);
+					//点击srvlist切换srvcontent是否显示
+					$("div.srvlist").click(function(){
+						$(this).next().slideToggle('fast');
+					});
 				}
-				$("#searchresult").addClass("srborder");
-				showMessages(xml);
-			},"xml");
+			});
 			return false;
 		});
 	});
 	function showMessages(xml){
 		var countnum = $("countnum",xml).text();
-		htmlcountnum = "<div class='filecount'>有 "+countnum+" 条与 "+$("#content").val()+" 相关的信息</div>";
+		var sizenum = $("sizenum",xml).text();
+		htmlcountnum = "<div class='filecount'>有 "+countnum+" 条与 <span class='keywords'>"+$("#content").val()+"</span> 相关的信息，共 "+sizenum+"</div>";
 		$("#searchresult").append(htmlcountnum);
+		var htmlfile = "";
 		if(countnum){	//有记录才显示
 			var lastftpID = 0;
 			$("msg",xml).each(function(){
@@ -67,8 +86,7 @@
 				var fileID = $("fileID",this).text();
 				var ftpID = $("ftpID",this).text();
 				if(lastftpID != ftpID){
-					var htmlfile = "<div class='ftplist'>ftp://"+ftpServer+remoteDir+"</div>";
-					$("#searchresult").append(htmlfile);
+					htmlfile = htmlfile+"</div><div class='srvlist'>ftp://"+ftpServer+remoteDir+"</div><div class='srvcontent'>";
 					lastftpID = ftpID;
 				}
 				var fileName = $("fileName",this).text();
@@ -78,12 +96,12 @@
 				var fileType = $("fileType",this).text();
 
 				if(fileType == 0) {	//0:file, 1:folder
-					var htmlfile = "<div class='filelist'><a href='fileinfo.php?fileID="+fileID+"'>"+fileName+"</a> <span class='filesize'>"+fileSize+"</span><span class='filetime'> [ "+fileTime+" ]</span><div class='filelink'>ftp://"+ftpServer+fileDir+"/"+fileName+"</div><br/>";
+					htmlfile = htmlfile+"<div class='filelist'><a href='fileinfo.php?fileID="+fileID+"'>"+fileName+"</a> <span class='filesize'>"+fileSize+"</span><span class='filetime'> [ "+fileTime+" ]</span><div class='filelink'>ftp://"+ftpServer+fileDir+"/"+fileName+"</div></div><br/>";
 				}else{
-					var htmlfile = "<div class='folderlist'><a href='browse.php?fileID="+fileID+"'>"+fileName+"</a>  [ "+fileTime+" ]</div><div class='filelink'>ftp://"+ftpServer+fileDir+"/"+fileName+"</div><br/>";
-				}			
-				$("#searchresult").append(htmlfile);
+					htmlfile = htmlfile+"<div class='folderlist'><a href='browse.php?fileID="+fileID+"'>"+fileName+"</a>  [ "+fileTime+" ]</div><div class='filelink'>ftp://"+ftpServer+fileDir+"/"+fileName+"</div><br/>";
+				}
 			});
 		}
+		$("#searchresult").append(ltrimdiv(htmlfile));
 	}
 //]]>

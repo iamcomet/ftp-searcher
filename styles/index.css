@@ -3,23 +3,46 @@ body{
    padding:0;
    font-size:14px;
 }
-#logo {
+.logo {
 	text-align: center;
 	font-size:36px;
 }
-#wrapper {
+.sform {
 	margin: auto;
-	width: 330px;
+	width: 400px;
 }
-#searchresult {
+.searchresult {
 	padding: 10px;
 	overflow: auto;
+}
+.foot{
+	text-align: center;
+}
+.notless{
+	text-align: center;
+}
+.loading{
+	display:none;
+}
+a:link{
+
+}
+a:visited{
+	text-decoration:none;
+}
+a:hover{
+	//text-decoration:none;
+}
+a:active{
+	text-decoration:none;
 }
 .srborder {
 	border: 1px;
 }
-.ftplist {
+.srvlist {
 	background-color:#5fc928;
+	border-bottom: 1px dashed #000;
+	padding: 3px;
 }
 .filelist {
 	color:#1ca325;
@@ -27,21 +50,44 @@ body{
 .folderlist {
 	color:#2169d0;
 }
+.username {
+	color:#000;
+	text-decoration:none;
+}
 .filesize {
 	color:#000;
+	text-decoration:none;
+}
+.filedir {
+	color:#000;
+	text-decoration:none;
 }
 .filetime {
 	color:#000;
 }
 .filelink {
 	color:#23890c;
+	text-decoration:none;
+}
+.filelink a{
+	color:#000;
+	text-decoration:none;
+}
+.filelink .filesize a{
+	color:#000;
+	text-decoration:none;
 }
 .filecount {
 	background-color:#00ff87;
+	padding: 2px;
+}
+.filecount .keywords{
+	color:#f00;
 }
 .onError {
-	color:#ff0000;
+	color:#f00;
 }
 .formtips {
 	width: 2px;margin:2px;padding:2px;
 }
+
