@@ -38,7 +38,6 @@ function getConfig()
 		$FileCount = 0;
 		$FolderCount = 0;
 		$SumSize = 0;
-		$ot="";
 	
 		// Connect to FTP Server
 		$conn_id = ftp_connect($ftp_server);
