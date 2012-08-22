@@ -98,6 +98,6 @@
 			});
 		}
 		htmlfile = htmlfile+"</div>";	//闭合最后的<div class='srvcontent'>
-		$("#searchresult").append(ltrimdiv(htmlfile));
+		$("#searchresult").append(ldivtrim(htmlfile));
 	}
 //]]>

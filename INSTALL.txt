@@ -1,0 +1,12 @@
+安装说明：
+
+页面部分：
+1.使用mysql新建数据库ftps，导入data/ftps.sql.zip，里面含有表和测试数据，如果测试数据可以自行清空。
+2.配置apache站点，把ftpsearch文件夹全部内容复制到站点下，修改inc/conn.php中的$dbhost,$dbuser,$dbpass为数据库服务器ip，数据库用户名，密码。
+3.使用浏览器(如firefox 14,chrome 18等)浏览。
+
+引擎安装：
+ftp：
+1.在cron中设置好定时获取服务器内容的时间，如：每小时的30分（间隔1小时）获取一次所有服务器的内容："30 * * * * php getftplist.php" 。详细的cron设置方法请参考：http://www.3gcomet.com/article.asp?id=381
+
+2012-08-22 10:18:03 
