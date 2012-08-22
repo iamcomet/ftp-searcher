@@ -1,6 +1,6 @@
 //<![CDATA[
 	$(function(){
-		$("#foot").html(" Power by <a href=\"http://www.3gComet.com\" target=\"_blank\">星魂驿站</a> "+currentYear());
+		$("#foot").html(" Power by <a href=\"http://www.3gComet.com\" target=\"_blank\">星魂驿站</a> "+timestampToStr(new Date().getTime()/1000,"yyyy"));
 		//表单提交
 		$("#loading").ajaxStart(function(){
 			$(this).show();
@@ -18,8 +18,7 @@
 				//return unescape([para[2]]);
 			}
 			return actionpage;
-		};
-
+		}
 		//搜索关键字提示
 		function log( message ) {
 			$( "<div/>" ).text( message ).prependTo( "#log" );
@@ -29,7 +28,6 @@
 			source: "search-keyword.php",
 			minLength: 2
 		});
-
 		//提交表单之前的检测
 		$("#searchform").submit(function(){
 			var actionpage = getUrl("se");
@@ -48,6 +46,10 @@
 					action: "search"
 				},
 				dataType:"xml",
+				//请求失败后的回调函数
+				error:function(xml){
+						alert("loading XML error.");
+						},
 				//请求成功后的回调函数
 				success:function(xml){
 					$("#searchresult").html("");
@@ -58,6 +60,10 @@
 					$("#searchresult").addClass("srborder");
 					//对返回的xml进行处理并显示
 					showMessages(xml);
+					//点击srvlist切换srvcontent是否显示
+					$("div.srvlist span").click(function(event){
+						event.stopPropagation();	//停止事件冒泡，即不执行下面的srvcontent切换
+					});
 					//点击srvlist切换srvcontent是否显示
 					$("div.srvlist").click(function(){
 						$(this).next().slideToggle('fast');
@@ -81,7 +87,7 @@
 				var fileID = $("fileID",this).text();
 				var ftpID = $("ftpID",this).text();
 				if(lastftpID != ftpID){
-					htmlfile = htmlfile+"</div><div class='srvlist'>ftp://"+ftpServer+remoteDir+"</div><div class='srvcontent'>";
+					htmlfile = htmlfile+"</div><div class='srvlist'>ftp://"+ftpServer+remoteDir+" <span><a href=\"#top\">返回顶端</a></span></div><div class='srvcontent'>";
 					lastftpID = ftpID;
 				}
 				var fileName = $("fileName",this).text();
